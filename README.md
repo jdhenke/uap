@@ -4,7 +4,7 @@
 >
 > Powered by [Celestrium](https://github.com/jdhenke/celestrium).
 >
-> Live [public site](http://celestrium.herokuapp.com).
+> Live [public site](http://conceptnet.herokuapp.com).
 
 ## Local Setup
 
@@ -13,10 +13,6 @@ Ensure celestrium is pulled in
 ```bash
 git submodule init
 git submodule update
-```
-
-```bash
-git submodule init
 ```
 
 **Install python dependencies** using [virtualenv](https://pypi.python.org/pypi/virtualenv).
