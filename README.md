@@ -4,7 +4,7 @@
 >
 > Powered by [Celestrium](https://github.com/jdhenke/celestrium).
 >
-> Live [public site](http://celestrium.herokuapp.com).
+> Live [public site](http://conceptnet.herokuapp.com).
 
 ## Local Setup
 
