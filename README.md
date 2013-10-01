@@ -15,10 +15,6 @@ git submodule init
 git submodule update
 ```
 
-```bash
-git submodule init
-```
-
 **Install python dependencies** using [virtualenv](https://pypi.python.org/pypi/virtualenv).
 
 ```bash
