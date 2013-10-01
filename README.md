@@ -1,11 +1,25 @@
-Celestrium
+6.UAP - Joe Henke
 ===
-
-A tool to understand your graph based data.
+> A tool to visualize and understand ConceptNet.
+>
+> Powered by [Celestrium](https://github.com/jdhenke/celestrium).
+>
+> Live [public site](http://celestrium.herokuapp.com).
 
 ## Local Setup
 
-Install dependencies using [virtualenv](https://pypi.python.org/pypi/virtualenv).
+Ensure celestrium is pulled in
+
+```bash
+git submodule init
+git submodule update
+```
+
+```bash
+git submodule init
+```
+
+**Install python dependencies** using [virtualenv](https://pypi.python.org/pypi/virtualenv).
 
 ```bash
 # setup virtual environment
@@ -20,7 +34,7 @@ pip install -r requirements.txt
 pip install divisi2 csc-pysparse
 ```
 
-Install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+**Install the [Heroku Toolbelt](https://toolbelt.heroku.com/)**.
 
 ## Running Locally
 

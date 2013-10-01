@@ -12,7 +12,7 @@ requirejs.config({
 });
 
 /* main javascript for page */
-define(["jquery", "underscore", "d3.v3.min", "jquery.typeahead"], function($, _, d3, ignore) {
+requirejs(["jquery", "underscore", "d3.v3.min", "jquery.typeahead"], function($, _, d3, ignore) {
   
   /* get original dimensions to center first animation */
   var initialWindowWidth = $(window).width();
