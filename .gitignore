@@ -36,3 +36,6 @@ nosetests.xml
 
 # Virtual Environment
 env
+
+# Mac Lameness
+.DS_Store
