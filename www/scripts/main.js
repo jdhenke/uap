@@ -14,5 +14,5 @@ requirejs.config({
 /* main javascript for page */
 requirejs(["celestrium/graphViewer"], 
 function(GraphViewer) {
-  new GraphViewer().init();
+  new GraphViewer("#workspace").init();
 });
