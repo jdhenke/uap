@@ -11,7 +11,7 @@
 Install [virtualenv](https://pypi.python.org/pypi/virtualenv) and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
 ```bash
-git clone --recursive git@github.com:jdhenke/uap.git && cd uap
+git clone --recursive https://github.com/jdhenke/uap.git && cd uap
 
 # setup virtual environment
 virtualenv env
