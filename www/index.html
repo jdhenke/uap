@@ -1,8 +1,16 @@
 <html>
 <head>
+
+<!-- title for page -->
 <title>ConceptNet</title>
+
+<!-- icon for page -->
 <link rel="shortcut icon" href="https://identicons.github.com/jdhenke.png">
+
+<!-- javascript for page -->
 <script data-main="scripts/main" src="scripts/require.js"></script>
+
+<!-- style for page -->
 <style>
 
   /* overall font */
@@ -15,12 +23,11 @@
   #bottom-left-container { bottom: 5px; left: 5px;}
   #bottom-right-container {bottom: 5px; right: 5px;}
 
-  /* workspace */
+  /* graph workspace */
   .node circle {fill: steelblue; stroke: steelblue;}
   .node.selected circle {fill: orange;}
   .node text {opacity: 0.5; }
   .node:hover text {opacity: 1; }
-
   .link {stroke: gray; opacity: 0.5;}
 
   /* node search */
@@ -48,12 +55,17 @@
 </style>
 </head>
 <body>
+
+  <!-- workspace where graph is displayed -->
   <div id="workspace"></div>
+
+  <!-- helper containers -->
   <div id="top-left-container" class="container"></div>
   <div id="top-right-container" class="container"></div>
   <div id="bottom-left-container" class="container"></div>
   <div id="bottom-right-container" class="container">
     <a href="https://github.com/jdhenke/uap">GitHub</a>
   </div>
+
 </body>
 </html>

@@ -134,6 +134,5 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
     .append(linkHistogramView.el);
   $("#top-right-container").append(nodeSearch.el);
   $("#bottom-left-container").append(graphStatsView.el);
-  
 
 });
