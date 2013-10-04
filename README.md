@@ -6,18 +6,13 @@
 >
 > Live [public site](http://conceptnet.herokuapp.com).
 
-## Local Setup
+## Setup
 
-Ensure celestrium is pulled in
-
-```bash
-git submodule init
-git submodule update
-```
-
-**Install python dependencies** using [virtualenv](https://pypi.python.org/pypi/virtualenv).
+Install [virtualenv](https://pypi.python.org/pypi/virtualenv) and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
 ```bash
+git clone --recursive git@github.com:jdhenke/uap.git && cd uap
+
 # setup virtual environment
 virtualenv env
 source env/bin/activate
@@ -28,15 +23,14 @@ pip install -r requirements.txt
 # install these *special* dependencies
 # this is a result of them depending on numpy in their setup.py's
 pip install divisi2 csc-pysparse
-```
 
-**Install the [Heroku Toolbelt](https://toolbelt.heroku.com/)**.
-
-## Running Locally
-
-```bash
+# start local server
 foreman start
+
+# your local server should be running...
 ```
+
+View your local version at [http://localhost:5000/](http://localhost:5000/).
 
 ## Deploying to [Heroku](https://www.heroku.com/)
 
