@@ -5,150 +5,55 @@
 <script data-main="scripts/main" src="scripts/require.js"></script>
 <style>
 
-  /* remove default chrome glow */
-  textarea, input { outline: none; }
+  /* overall font */
+  body, .node-search-container input {font-family: "Trebuchet MS";}
 
-  /* link styling */
-  a { text-decoration: none; font-style: italic; color: white; }
-  a:hover { text-decoration: underline;}
-  .link-separator {color: white;}
+  /* container positioning */
+  .container {position: fixed; z-index: 10; background-color: #ccc;  padding: 2px;}
+  #top-left-container { top: 5px; left: 5px; }
+  #top-right-container { top: 5px; right: 5px; }
+  #bottom-left-container { bottom: 5px; left: 5px;}
+  #bottom-right-container {bottom: 5px; right: 5px;}
 
-  /* custom button styling */
-  .btn { color: white; 
-         margin-top: 10px; margin-bottom: 10px; 
-         margin-left: 4px; margin-right: 4px;
-         padding: 4px; border: 1px solid white; background-color: #AAA; cursor: pointer;
-    /* don't let user select the text */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; 
-   }
-  .btn:hover {background-color: #999; }
+  /* workspace */
+  .node circle {fill: steelblue; stroke: steelblue;}
+  .node.selected circle {fill: orange;}
+  .node text {opacity: 0.5; }
+  .node:hover text {opacity: 1; }
 
-  /* special text styling */
-  #title { font-size: 18pt; margin-bottom: 2px;}
-  #subtitle { font-size: 10pt; font-style: italic; color: #333;}
-  #title, #subtitle { text-align: center; }
-  .symbol { width: 20px; font-family: "Monospace"; }
-  .stat {color: white; }
+  .link {stroke: gray; opacity: 0.5;}
 
-  /* workspace styles*/
-  #workspace > svg { position: absolute; left: 0; top: 0; width: "100%"; height: "100%"; z-index: 0;}
-  #workspace .link { stroke: #999; stroke-opacity: .6; }
-  #workspace .node {cursor: pointer; }
-  #workspace .node text { opacity: 0.25; font-family: "Trebuchet MS"}
-  #workspace .node circle { fill: steelblue; stroke: white;}
-  #workspace .node:hover text,
-  #workspace .node:hover circle { opacity: 1; fill: #FFA782;}
-  #workspace .node.selected circle {fill: #FF8A58;}
-
-  /* styles consistent across all fixed location helper containers */
-  .helper-container { z-index: 10;  font-size: 12pt; font-family: "Trebuchet MS"; }
-
-  /* styles consistent across all individual helpers */
-  .helper {background-color: #ccc; margin: 5px; padding: 4px;}
-
-  /* top left helper-container */
-  #helper-container-top-left { position: absolute; top: 5; left: 5; z-index: 10; }
-
-  /* top right helpers */
-  #helper-container-top-right { position: absolute; top: 5; right: 5; z-index: 10; }
-  #input-search, .tt-hint { border: 0px; font-size: 12pt; font-family: "Trebuchet MS"; padding: 2px; margin: 0px;}
+  /* node search */
+  .node-search-container input {font-size: 12pt; outline: none;}
   .tt-dropdown-menu {background-color: #ccc; width: 100%; max-height: 307; overflow-y: auto;}
   .tt-is-under-cursor { color: white; }
   .tt-suggestions { padding-left: 2px;}
-  .tt-suggestion { }
+  .tt-suggestion { margin-left: 2px;}
 
-  /* bottom left helpers */
-  #bottom-left-container {position: absolute; bottom: 5px; left: 5px;}
+  /* stats */
+  .graph-stat {color: white;}
 
-  /* bottom right helpers */
-  #bottom-right-container {position: absolute; bottom: 5px; right: 5px;}
+  /* histogram */
+  .histogram text {font-size: 6pt;}
+  .histogram .bar rect {fill: steelblue;}
+  .histogram .bar text {fill: white;}
+  .histogram .axis path,
+  .histogram .axis line {fill: none; stroke: #000; shape-rendering: crispEdges; }
+  .histogram-header {text-align: center; }
 
-  /* notifications */
-  #notifications-container { position: absolute; top: 5px; width: 100%; z-index: 10;}
-  .notification {margin-left: auto; margin-right: auto; width: 30%; font-family: "Trebuchet MS"; background-color: #CCC; padding: 4px; text-align: center; margin-bottom: 2px;}
+  /* links */
+  #bottom-right-container a { text-decoration: none; font-style: italic;}
+  #bottom-right-container a:hover {color: white;}
 
 </style>
 </head>
 <body>
-
-  <!-- Container for SVG Workspace -->
   <div id="workspace"></div>
-
-  <!-- Container for Top Left Helpers -->
-  <div id="helper-container-top-left" class="helper-container">
-    <div class="helper">
-      <div id="title">
-        ConceptNet
-      </div>
-    </div>
-    
-    <div class="helper">
-      <table border="0">
-        <tr>
-          <td>Charge: </td>
-          <td>
-            <input id="input-charge" type="range" name="charge" min="0" max="100">
-          </td>
-        </tr>
-        <tr>
-          <td>Gravity: </td>
-          <td>
-            <input id="input-gravity" type="range" name="link-distance" min="0" max="100">
-          </td>
-        </tr>
-        <tr>
-          <td>Connectivity: </td>
-          <td>
-            <input id="input-min-edge-weight" type="range", name="edge-weight" min="0" max="100">
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <div id="selection-helper" style="display: none; " class="helper">
-      <div id="btn-add-related-nodes" class="btn"><span class="symbol">+ </span>Add Related Nodes</div>
-    </div>
+  <div id="top-left-container" class="container"></div>
+  <div id="top-right-container" class="container"></div>
+  <div id="bottom-left-container" class="container"></div>
+  <div id="bottom-right-container" class="container">
+    <a href="https://github.com/jdhenke/uap">GitHub</a>
   </div>
-
-  <!-- Container for Top Right Helpers -->
-  <div id="helper-container-top-right" class="helper-container">
-    <div class="helper">
-      <input id="input-search" type="text" placeholder="Add..."></input>
-    </div>
-  </div>
-
-  <!-- Container for Bottom Left Helpers -->
-  <div id="bottom-left-container" class="helper-container">
-    <div id="stats-helper" class="helper">
-      <table border="0">
-        <tr>
-          <td>Nodes: </td>
-          <td><span class="stat" id="stat-num-nodes">0</span></td>
-        </tr>
-        <tr>
-          <td>Edges: </td>
-          <td><span class="stat" id="stat-num-edges">0</span></td>
-        </tr>
-      </table>
-    </div>
-  </div>
-
-  <!-- Container for Bottom Right Helpers -->
-  <div id="bottom-right-container" class="helper-container">
-    <div id="docs-helper" class="helper">
-      <a class="external-link" href="https://github.com/jdhenke/uap/wiki/User-Guide">Docs</a>
-      <span class="link-separator"> | </span>
-      <a class="external-link" href="https://github.com/jdhenke/uap/">Code</a>
-    </div>
-  </div>
-
-  <!-- Container for Notifications -->
-  <div id="notifications-container"></div>
-
 </body>
 </html>
