@@ -3,8 +3,6 @@
 > A tool to visualize and understand ConceptNet.
 >
 > Powered by [Celestrium](https://github.com/jdhenke/celestrium).
->
-> Live [public site](http://conceptnet.herokuapp.com).
 
 ## Setup
 
