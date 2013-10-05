@@ -1,8 +1,13 @@
-6.UAP - Joe Henke
-===
-> A tool to visualize and understand ConceptNet.
+Joe Henke's 6.UAP Project
+=========================
+
+> A tool to visualize and understand [ConceptNet](http://conceptnet5.media.mit.edu/).
 >
-> Powered by [Celestrium](https://github.com/jdhenke/celestrium).
+> Check out the hopefully functioning and probably not current [public instance](http://conceptnet.herokuapp.com/).
+>
+> Powered by [celestrium](https://github.com/jdhenke/celestrium).
+>
+> 
 
 ## Setup
 
@@ -24,38 +29,44 @@ pip install divisi2 csc-pysparse
 
 # start local server
 foreman start
-
-# your local server should be running...
 ```
 
 View your local version at [http://localhost:5000/](http://localhost:5000/).
 
 ## Deploying to [Heroku](https://www.heroku.com/)
 
+This must be done in two stages because some packages require numpy to be fully installed before even starting to install these packages.
+
+### Stage 1
+
 ```bash
-git checkout -b prod # do all these changes on a different branch
+# do all these changes on a different branch
+git checkout -b prod
+
+# create a new heroku app
 heroku create
+
+# push current branch to heroku
 git push heroku prod:master
 ```
 
-Now, edit `requirements.txt` to uncomment the bottom list of packages.
+> This push to heroku should successfully intall the dependencies but fail to launch the app, as all the dependencies have not been installed.
+> You can see the dependency installation as output to the push but to see the failed launch you'll need to check the logs with `heroku logs --tail`.
 
-> This is necessary because those packages require numpy to be *fully* installed before even starting to install these packages. Hence the two stages.
+### Stage 2
 
-Commit the changes and push to heroku so it recognizes and installs the remaining packages.
+Edit `requirements.txt` to uncomment the bottom list of packages, then run:
 
 ```bash
 git add requirements.txt
-git commit -m 'adding second set of requirements'
-git push heroku prod:master
+git commit -m 'add second wave of requirements'
+git push heroku prod:master && (heroku logs --tail; heroku open)
 ```
 
-Check the logs to see when things are finally up, then check it out.
-
-```bash
-heroku logs --tail
-heroku open
-```
+> The last line is a convenience and a one line script I saved as `deploy.sh` on my prod branch.
+> First, push to heroku, stopping if it fails for some reason.
+> Then, view the logs so you can watch for a successful startup of your app on heroku or see what failed.
+> Lastly, CTRL-C to exit the log view and your instance will be opened in your browser.
 
 ## License
 
