@@ -16,8 +16,8 @@ requirejs.config({
 });
 
 /* main javascript for page */
-requirejs(["jquery", "celestrium/graphModel", "celestrium/graphView", "celestrium/nodeSearch", "celestrium/selection", "celestrium/graphStats", "celestrium/forceSliders", "celestrium/edgeChecker", "celestrium/keyListener", "celestrium/linkHistogram"], 
-function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceSlidersView, EdgeChecker, KeyListener, LinkHistogramView) {
+requirejs(["jquery", "celestrium/graphModel", "celestrium/graphView", "celestrium/nodeSearch", "celestrium/selection", "celestrium/graphStats", "celestrium/forceSliders", "celestrium/linkChecker", "celestrium/keyListener", "celestrium/linkHistogram"], 
+function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceSlidersView, LinkChecker, KeyListener, LinkHistogramView) {
 
   var graphModel = new GraphModel({
     nodeHash: function(node) {
@@ -47,7 +47,7 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
       return "/get_nodes";
     };
 
-    this.addEdges = function(node) {
+    this.addLinks = function(node) {
       var nodes = graphModel.getNodes();
       var data = {
         text: node.text,
@@ -87,10 +87,9 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
 
   };
 
-  new EdgeChecker(graphModel, dataProvider);
+  new LinkChecker(graphModel, dataProvider);
   var sel = new Selection(graphModel, graphView);
   var keyListener = new KeyListener(document.querySelector("body"));
-  keyListener.on("all", function(n) {console.log(n)});
 
   // CTRL + A
   keyListener.on("down:17:65", sel.selectAll, sel);
