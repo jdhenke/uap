@@ -1,5 +1,4 @@
 import os, sys, cherrypy
-import simplejson as json
 from providers import ConceptProvider, AssertionProvider
 
 class Server(object):

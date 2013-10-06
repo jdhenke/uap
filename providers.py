@@ -1,5 +1,4 @@
 import sys, math, divisi2
-from pprint import pprint
 
 class ConceptProvider(object):
   
@@ -26,10 +25,6 @@ class ConceptProvider(object):
         newConceptsSet.add(relatedConcept)
         i += 1
     return [{"text": concept} for concept in newConceptsSet]
-
-if __name__ == '__main__':
-  cp = ConceptProvider(100)
-  print cp.get_related_nodes([{"text": "animal"}], 0.75)
 
 class AssertionProvider(ConceptProvider):
 
@@ -88,11 +83,3 @@ class AssertionProvider(ConceptProvider):
     s1 = self.sim.entry_named(a1["concept1"], a2["concept1"])
     s2 = self.sim.entry_named(a1["concept2"], a2["concept2"])
     return 2.0 * s1 * s2 / (s1 + s2) # harmonic mean
-
-assertion = {
-  "concept1": "pizza",
-  "concept2": "food",
-  "relation": "IsA",
-  "text": "pizza isA food",
-  "truth": 1.0,
-}
