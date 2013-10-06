@@ -34,14 +34,8 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
 
   var dataProvider = new function() {
 
-    var minThreshold = this.minThreshold = 0.75;
-    var threshold = 0.95;
-
-     function toJSONList(nodes) {
-      return JSON.stringify(_.map(nodes, function(node) {
-        return node.text;
-      }));
-    }
+    this.minThreshold = 0.75;
+    this.threshold = 0.90;
 
     this.getNodesPath = function() {
       return "/get_nodes";
@@ -50,8 +44,8 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
     this.addLinks = function(node) {
       var nodes = graphModel.getNodes();
       var data = {
-        text: node.text,
-        allNodes: toJSONList(graphModel.getNodes()),
+        node: JSON.stringify(node),
+        otherNodes: JSON.stringify(nodes),
       }
       $.ajax({
         url: "get_edges",
@@ -59,10 +53,10 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
         success: function(response) {
           _.each(response, function(strength, i) {
             var link = {source:node, target: nodes[i], strength: strength};
-            if (link.strength > threshold) {
+            if (link.strength > this.threshold) {
               graphModel.putLink(link);
             }
-          });
+          }.bind(this));
         }.bind(this),
       });
     }
@@ -70,21 +64,21 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
     this.addRelatedNodes = function() {
 
       var data = {
-        selectedNodes: toJSONList(sel.getSelectedNodes()),
-        allNodes: toJSONList(graphModel.getNodes()),
+        nodes: JSON.stringify(sel.getSelectedNodes()),
         minStrength: this.minThreshold,
       };
+
       $.ajax({
         url: "get_related_nodes",
         data: data,
         success: function(response) {
-          _.each(response.nodes, function(nodeText) {
-            graphModel.putNode({text: nodeText});
+          _.each(response, function(node) {
+            graphModel.putNode(node);
           });
         },
       });
-    };
 
+    };
   };
 
   new LinkChecker(graphModel, dataProvider);
@@ -133,5 +127,43 @@ function($, GraphModel, GraphView, NodeSearch, Selection, GraphStatsView, ForceS
     .append(linkHistogramView.el);
   $("#top-right-container").append(nodeSearch.el);
   $("#bottom-left-container").append(graphStatsView.el);
+
+
+  // adjust link strength and width based on threshold
+  (function() {
+    function linkStrength(link) {
+      return (link.strength - dataProvider.threshold) / (1.0 - dataProvider.threshold);
+    }
+    graphView.getForceLayout().linkStrength(linkStrength);
+    graphView.on("enter:link", function(enterSelection) {
+      enterSelection.attr("stroke-width", function(link) { return 5 * linkStrength(link); });
+    });
+  })();
+
+  if (false) // only for assertions
+    (function() {
+
+      dataProvider.minThreshold = 0.94;
+      dataProvider.threshold = 0.95;
+
+      // color nodes based on truth
+      graphView.on("enter:node", function(enterSelection) {
+        var color = d3.scale.linear()
+          .domain([0, 1])
+          .range(["red", "green"]);
+        var f = function(n) {return color(n.truth);};
+        enterSelection.attr("fill", f);
+        enterSelection.select("circle").attr("stroke", f);
+      });
+
+      graphModel.putNode({
+        "concept1": "pizza",
+        "concept2": "food",
+        "relation": "IsA",
+        "text": "pizza IsA food",
+        "truth": 0.7132785014872914,
+      });
+
+    })();
 
 });
