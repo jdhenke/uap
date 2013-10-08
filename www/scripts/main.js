@@ -28,11 +28,6 @@ requirejs(["celestrium/celestrium"], function(Celestrium) {
   var dataProvider = new function() {
 
     this.minThreshold = 0.75;
-    this.threshold = 0.90;
-
-    this.getNodesPath = function() {
-      return "/get_nodes";
-    };
 
     this.getLinks = function(node, nodes, callback) {
 
@@ -45,7 +40,7 @@ requirejs(["celestrium/celestrium"], function(Celestrium) {
 
     }
 
-    this.getRelatedNodes = function(nodes, callback) {
+    this.getLinkedNodes = function(nodes, callback) {
 
       var data = {
         nodes: JSON.stringify(nodes),
@@ -69,6 +64,7 @@ requirejs(["celestrium/celestrium"], function(Celestrium) {
   new Celestrium({
     el: document.querySelector("#workspace"),
     dataProvider: dataProvider,
+    nodePrefetch: "get_concepts",
   }).render();
 
 })
