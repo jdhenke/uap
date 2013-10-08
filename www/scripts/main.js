@@ -26,29 +26,21 @@ requirejs.config({
 requirejs(["celestrium/celestrium"], function(Celestrium) {
 
   var dataProvider = new function() {
-
     this.minThreshold = 0.75;
-
     this.getLinks = function(node, nodes, callback) {
-
       var data = {
         node: JSON.stringify(node),
         otherNodes: JSON.stringify(nodes),
       }
-
       this.ajax('get_edges', data, callback);
-
-    }
+    };
 
     this.getLinkedNodes = function(nodes, callback) {
-
       var data = {
         nodes: JSON.stringify(nodes),
         minStrength: this.minThreshold,
       };
-
       this.ajax('get_related_nodes', data, callback);
-
     };
 
     this.ajax = function(url, data, callback) {
@@ -58,7 +50,6 @@ requirejs(["celestrium/celestrium"], function(Celestrium) {
         success: callback,
       });
     }
-
   };
 
   new Celestrium({
