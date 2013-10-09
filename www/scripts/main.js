@@ -1,7 +1,6 @@
 requirejs.config({
   baseUrl: "/scripts/celestrium/",
   paths: {
-    "celestrium": "src",
     "jquery": "lib/jquery",
     "jquery.typeahead": "lib/jquery.typeahead",
     "underscore": "lib/underscore",
@@ -23,7 +22,7 @@ requirejs.config({
   }
 });
 
-requirejs(["celestrium/celestrium"], function(Celestrium) {
+requirejs(["src/celestrium"], function(Celestrium) {
 
   var dataProvider = new function() {
     this.minThreshold = 0.75;
@@ -52,7 +51,7 @@ requirejs(["celestrium/celestrium"], function(Celestrium) {
     }
   };
 
-  new Celestrium({
+  var celestrium = new Celestrium({
     el: document.querySelector("#workspace"),
     dataProvider: dataProvider,
     nodePrefetch: "get_concepts",
