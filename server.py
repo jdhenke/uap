@@ -10,7 +10,7 @@ class Server(object):
                 }
 
   def __init__(self):
-    self.provider = ConceptProvider(100)
+    self.provider = AssertionProvider(100)
 
   @cherrypy.expose
   @cherrypy.tools.json_out()

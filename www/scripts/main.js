@@ -54,7 +54,7 @@ requirejs(["src/celestrium"], function(Celestrium) {
   var celestrium = new Celestrium({
     el: document.querySelector("#workspace"),
     dataProvider: dataProvider,
-    nodePrefetch: "get_nodes",
+    // nodePrefetch: "get_nodes",
   }).render();
 
 })
