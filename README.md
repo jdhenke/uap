@@ -9,7 +9,7 @@ Joe Henke's 6.UAP Project
 >
 > 
 
-## Setup
+## Setup && Running Locally
 
 Install [virtualenv](https://pypi.python.org/pypi/virtualenv) and the [Heroku Toolbelt](https://toolbelt.heroku.com/).
 
