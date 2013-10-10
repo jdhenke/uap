@@ -65,8 +65,8 @@ git push heroku prod:master && (heroku logs --tail; heroku open)
 
 > The last line is a convenience and a one line script I saved as `deploy.sh` on my prod branch.
 > First, push to heroku, stopping if it fails for some reason.
-> Then, view the logs so you can watch for a successful startup of your app on heroku or see what failed.
-> Lastly, CTRL-C to exit the log view and your instance will be opened in your browser.
+> If all seems well, view the logs so you can watch for a successful startup of your app on heroku or see what fails.
+> Lastly, hit CTRL-C to stop viewing the log and your instance will be opened in your browser.
 
 ## License
 
