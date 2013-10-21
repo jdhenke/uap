@@ -22,7 +22,7 @@ requirejs.config({
   }
 });
 
-requirejs(["src/celestrium"], function(Celestrium) {
+requirejs(["core/celestrium"], function(Celestrium) {
 
   var dataProvider = new function() {
     this.minThreshold = 0.75;
@@ -51,10 +51,17 @@ requirejs(["src/celestrium"], function(Celestrium) {
     }
   };
 
-  var celestrium = new Celestrium({
+  Celestrium.createWorkspace({
     el: document.querySelector("#workspace"),
     dataProvider: dataProvider,
     // nodePrefetch: "get_nodes",
-  }).render();
-
-})
+    nodeAttributes: {
+      conceptText: {
+        type: "nominal",
+        getValue: function(node) {
+          return node.text;
+        },
+      },
+    },
+  });
+});

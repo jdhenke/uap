@@ -7,7 +7,7 @@ Joe Henke's 6.UAP Project
 >
 > Powered by [celestrium](https://github.com/jdhenke/celestrium).
 >
-> 
+>
 
 ## Setup && Running Locally
 
