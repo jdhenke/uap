@@ -45,7 +45,11 @@ git checkout -b prod
 
 # create a new heroku app
 heroku create
+```
 
+Modify [`.gitmodules`](./.gitmodules) to make celestirum https: `https://github.com/jdhenke/uap.git`.
+
+```bash
 # push current branch to heroku
 git push heroku prod:master
 ```
