@@ -1,0 +1,7 @@
+{
+  "name": "uap",
+  "version": "0.1.0",
+  "dependencies": {
+    "coffee-script": "*"
+  }
+}
