@@ -5,7 +5,7 @@ Deploying to Heroku
 
 ### **Step 0**
 
-Ensure your [local setup](./SETUP.md) is working.
+Ensure your [local setup](./README.md#setup) is working.
 
 ### **Step 1**
 
