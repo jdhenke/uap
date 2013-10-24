@@ -1,1 +1,1 @@
-web: sh driver.sh
+web: sh web.sh
