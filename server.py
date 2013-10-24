@@ -27,8 +27,8 @@ class Server(object):
   def get_related_nodes(self, nodes, minStrength):
     return self.provider.get_related_nodes(json.loads(nodes), float(minStrength))
 
-cherrypy.config.update({'server.socket_host': '0.0.0.0', 
-                         'server.socket_port': int(sys.argv[1]), 
-                        }) 
+cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                         'server.socket_port': int(sys.argv[1]),
+                        })
 
 cherrypy.quickstart(Server())

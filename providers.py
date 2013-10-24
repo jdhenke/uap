@@ -1,11 +1,11 @@
 import sys, math, divisi2
 
 class ConceptProvider(object):
-  
+
   def __init__(self, num_axes):
     A = divisi2.network.conceptnet_matrix('en')
     concept_axes, axis_weights, feature_axes = A.svd(k=num_axes)
-    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)  
+    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)
     self.concept_axes = concept_axes
 
   def get_nodes(self):
@@ -33,7 +33,7 @@ class AssertionProvider(ConceptProvider):
     concept_axes, axis_weights, feature_axes = A.svd(k=num_axes)
     self.concept_axes = concept_axes
     self.predictions = divisi2.reconstruct(concept_axes, axis_weights, feature_axes)
-    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)  
+    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)
 
   def get_edges(self, assertion, otherAssertions):
     output = []

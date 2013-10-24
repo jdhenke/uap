@@ -64,5 +64,4 @@ requirejs(["core/celestrium"], function(Celestrium) {
       },
     },
   });
-
-})
+});
