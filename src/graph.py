@@ -1,12 +1,35 @@
-import sys, math, divisi2
+import divisi2
 
-class ConceptProvider(object):
+def createGraph(svd, graphType):
+  if graphType == 'concepts':
+    return ConceptGraph(svd)
+  elif graphType == 'assertions':
+    return AssertionGraph(svd)
+  raise Exception("unrecognized graph type: [%s]" % (graphType, ))
 
-  def __init__(self, num_axes):
-    A = divisi2.network.conceptnet_matrix('en')
-    concept_axes, axis_weights, feature_axes = A.svd(k=num_axes)
-    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)
-    self.concept_axes = concept_axes
+class Graph(object):
+
+  def get_nodes(self):
+    raise NotImplementedError()
+
+  def get_edges(self):
+    raise NotImplementedError()
+
+  def get_related_nodes(self):
+    raise NotImplementedError()
+
+class KBGraph(Graph):
+
+  def __init__(self, svd):
+    self.concept_axes, self.axis_weights, self.feature_axes = svd
+    self.predictions = divisi2.reconstruct(self.concept_axes,
+                                           self.axis_weights,
+                                           self.feature_axes)
+    self.sim = divisi2.reconstruct_similarity(self.concept_axes,
+                                              self.axis_weights,
+                                              post_normalize=True)
+
+class ConceptGraph(KBGraph):
 
   def get_nodes(self):
     return [x for x in self.concept_axes.row_labels]
@@ -26,14 +49,7 @@ class ConceptProvider(object):
         i += 1
     return [{"text": concept} for concept in newConceptsSet]
 
-class AssertionProvider(ConceptProvider):
-
-  def __init__(self, num_axes):
-    A = divisi2.network.conceptnet_matrix('en')
-    concept_axes, axis_weights, feature_axes = A.svd(k=num_axes)
-    self.concept_axes = concept_axes
-    self.predictions = divisi2.reconstruct(concept_axes, axis_weights, feature_axes)
-    self.sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)
+class AssertionGraph(KBGraph):
 
   def get_edges(self, assertion, otherAssertions):
     output = []
