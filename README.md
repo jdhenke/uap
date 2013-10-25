@@ -17,6 +17,9 @@ Install [virtualenv](https://pypi.python.org/pypi/virtualenv) and the [Heroku To
 # clone this repo and its submodules
 git clone --recursive https://github.com/jdhenke/uap.git && cd uap
 
+# install node packages
+npm install
+
 # setup virtual environment
 virtualenv env
 source env/bin/activate
