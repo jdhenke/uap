@@ -1,4 +1,4 @@
-import divisi2
+import math, divisi2
 
 def createGraph(svd, graphType):
   if graphType == 'concepts':
@@ -60,7 +60,6 @@ class AssertionGraph(KBGraph):
   def get_related_nodes(self, assertions, minRelatedness):
     output = {}
     for assertion in assertions:
-      print assertion
       relation = assertion["relation"]
       c1 = assertion["concept1"]
       c2 = assertion["concept2"]
@@ -86,11 +85,8 @@ class AssertionGraph(KBGraph):
             "truth": normalized_truth,
           }
           relatedness = self.get_assertion_similarity(assertion, newAssertion)
-          print relatedness, minRelatedness, type(minRelatedness)
           if relatedness > minRelatedness:
             output[text] = newAssertion
-    print output.values()
-    sys.stdout.flush()
     return output.values()
 
   def get_assertion_similarity(self, a1, a2):

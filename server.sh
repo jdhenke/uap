@@ -5,4 +5,4 @@
 
 # run server
 # USAGE: python src/server.py <knowledgebase-uri> <num-axes> <concepts|assertions> <port>
-python src/server.py conceptnet 100 concepts $PORT
+python src/server.py conceptnet 100 assertions $PORT

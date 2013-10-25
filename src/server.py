@@ -15,6 +15,8 @@ class Server(object):
   def __init__(self, knowledgebaseURI, numAxes, graphType):
     matrix = knowledgebase.getMatrix(knowledgebaseURI)
     self.graph = graph.createGraph(matrix.svd(k=numAxes), graphType)
+    if graphType == 'assertions':
+      Server._cp_config['tools.staticdir.index'] = 'index-assertions.html'
 
   @cherrypy.expose
   @cherrypy.tools.json_out()
