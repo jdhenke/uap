@@ -25,7 +25,7 @@ requirejs.config({
 requirejs(["core/celestrium"], function(Celestrium) {
 
   var dataProvider = new function() {
-    this.minThreshold = 0.75;
+    this.minThreshold = 0.94;
     this.getLinks = function(node, nodes, callback) {
       var data = {
         node: JSON.stringify(node),
@@ -51,12 +51,12 @@ requirejs(["core/celestrium"], function(Celestrium) {
     }
   };
 
-  Celestrium.createWorkspace({
+  var workspace = Celestrium.createWorkspace({
     el: document.querySelector("#workspace"),
     dataProvider: dataProvider,
-    nodePrefetch: "get_nodes",
+    // nodePrefetch: "get_nodes",
     nodeAttributes: {
-      conceptText: {
+      assertionText: {
         type: "nominal",
         getValue: function(node) {
           return node.text;
@@ -65,4 +65,24 @@ requirejs(["core/celestrium"], function(Celestrium) {
     },
   });
 
-})
+  var colorScale = d3.scale.linear()
+    .domain([0, 1])
+    .range(["red", "green"]);
+
+  workspace.graphView.on("enter:node", function(nodeSelection) {
+    nodeSelection.attr("fill", function(n) {
+      return colorScale(n.truth);
+    });
+  });
+
+  var seed = {
+    "concept1": "pizza",
+    "concept2": "food",
+    "relation": "IsA",
+    "text": "pizza IsA food",
+    "raw_truth": 0.8,
+    "truth": 0.9,
+  }
+  workspace.graphModel.putNode(seed)
+
+});
