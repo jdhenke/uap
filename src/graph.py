@@ -1,10 +1,10 @@
-import math, divisi2
+import math, numpy, divisi2
 
-def createGraph(svd, graphType):
+def createGraph(matrix, numAxesStr, graphType):
   if graphType == 'concepts':
-    return ConceptGraph(svd)
+    return ConceptGraph(matrix, numAxesStr)
   elif graphType == 'assertions':
-    return AssertionGraph(svd)
+    return AssertionGraph(matrix, numAxesStr)
   raise Exception("unrecognized graph type: [%s]" % (graphType, ))
 
 class Graph(object):
@@ -18,36 +18,56 @@ class Graph(object):
   def get_related_nodes(self):
     raise NotImplementedError()
 
-class KBGraph(Graph):
-
-  def __init__(self, svd):
-    self.concept_axes, self.axis_weights, self.feature_axes = svd
+class ConceptGraphWrapper(object):
+  def __init__(self, matrix, numAxes):
+    self.concept_axes, self.axis_weights, self.feature_axes = matrix.svd(k=numAxes)
     self.predictions = divisi2.reconstruct(self.concept_axes,
                                            self.axis_weights,
                                            self.feature_axes)
     self.sim = divisi2.reconstruct_similarity(self.concept_axes,
                                               self.axis_weights,
                                               post_normalize=True)
+  def getSimilarity(self, a, b):
+    return self.sim.entry_named(a, b)
+
+class KBGraph(Graph):
+
+  def __init__(self, matrix, numAxesStr):
+    self.matrix = matrix
+    self.graphs = {}
+    for numAxes in numAxesStr.split(','):
+      numAxes = int(numAxes)
+      self.graphs[numAxes] = ConceptGraphWrapper(matrix, numAxes)
 
 class ConceptGraph(KBGraph):
 
   def get_nodes(self):
-    return [x for x in self.concept_axes.row_labels]
+    return list(self.matrix.row_labels)
 
   def get_edges(self, concept, otherConcepts):
-    return [self.sim.entry_named(concept["text"], c2["text"]) for c2 in otherConcepts]
+    output = []
+    for otherConcept in otherConcepts:
+      a, b = concept["text"], otherConcept["text"]
+      x = list(self.graphs.keys())
+      y = [graph.getSimilarity(a, b) for numAxes, graph in self.graphs.iteritems()]
+      coeffs = numpy.polyfit(x, y, len(x) - 1)
+      output.append(list(coeffs))
+    return output
 
   def get_related_nodes(self, concepts, minStrength):
     newConceptsSet = set()
+    subGraph = self.graphs[self.get_dimensionality_bounds()["min"]]
     for concept in concepts:
       limit = 100
-      relatedConcepts = self.sim.row_named(concept["text"]).top_items(n=limit)
+      relatedConcepts = subGraph.sim.row_named(concept["text"]).top_items(n=limit)
       i = 0
       while i < len(relatedConcepts) and relatedConcepts[i][1] > minStrength:
         relatedConcept, strength = relatedConcepts[i]
         newConceptsSet.add(relatedConcept)
         i += 1
     return [{"text": concept} for concept in newConceptsSet]
+  def get_dimensionality_bounds(self):
+    return {"min": min(self.graphs.keys()), "max": max(self.graphs.keys())}
 
 class AssertionGraph(KBGraph):
 
