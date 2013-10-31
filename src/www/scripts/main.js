@@ -22,7 +22,7 @@ requirejs.config({
   }
 });
 
-requirejs(["core/celestrium"], function(Celestrium) {
+requirejs(["core/celestrium" , "../coeffLinkChecker"], function(Celestrium, LinkChecker) {
 
   function main(response) {
 
@@ -32,7 +32,10 @@ requirejs(["core/celestrium"], function(Celestrium) {
     dimModel.set("dimensionality", response.max);
 
     function setLinkStrength(link) {
-      var coeffs = link.coeffs;
+      link.strength = interpolate(link.coeffs);
+    }
+
+    function interpolate(coeffs) {
       var degree = coeffs.length;
       var strength = 0;
       var dimensionality = dimModel.get("dimensionality");
@@ -43,7 +46,7 @@ requirejs(["core/celestrium"], function(Celestrium) {
         strength += coeffs[i] * dimMultiple;
         dimMultiple *= dimensionality
       }
-      link.strength = Math.min(1, Math.max(0, strength));
+      return Math.min(1, Math.max(0, strength));
     }
 
     var dataProvider = new function() {
@@ -90,6 +93,8 @@ requirejs(["core/celestrium"], function(Celestrium) {
         },
       },
     });
+
+    new LinkChecker(workspace.graphModel, dataProvider);
 
     workspace.graphModel.on("add:link", function(link) {
       setLinkStrength(link);
