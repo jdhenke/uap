@@ -33,6 +33,25 @@ class Server(object):
   def get_related_nodes(self, nodes, minStrength):
     return self.graph.get_related_nodes(json.loads(nodes), float(minStrength))
 
+  # this is terrible and assumes it will only be called for assertion graphs
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_truth(self, node):
+    node = json.loads(node)
+    return self.graph.get_truth(node["concept1"], node["concept2"], node["relation"])
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_concepts(self):
+    return self.graph.get_concepts()
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_relations(self):
+    return self.graph.get_relations()
+
+
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
                         'server.socket_port': int(portStr),
                        })

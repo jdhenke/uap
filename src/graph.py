@@ -51,6 +51,35 @@ class ConceptGraph(KBGraph):
 
 class AssertionGraph(KBGraph):
 
+  def get_concepts(self):
+    return [x for x in self.concept_axes.row_labels]
+
+  def get_relations(self):
+    return ["AtLocation",
+            "CapableOf",
+            "ConceptuallyRelatedTo",
+            "CreatedBy",
+            "Causes",
+            "CausesDesire",
+            "DefinedAs",
+            "Desires",
+            "HasA",
+            "HasProperty",
+            "HasSubevent",
+            "HasFirstSubevent",
+            "HasLastSubevent",
+            "HasPrerequisite",
+            "IsA",
+            "InheritsFrom",
+            "LocatedNear",
+            "MadeOf",
+            "MotivatedByGoal",
+            "ObstructedBy",
+            "PartOf",
+            "ReceivesAction",
+            "SymbolOf",
+            "UsedFor"]
+
   def get_edges(self, assertion, otherAssertions):
     output = []
     for a in otherAssertions:
@@ -95,3 +124,12 @@ class AssertionGraph(KBGraph):
     s1 = self.sim.entry_named(a1["concept1"], a2["concept1"])
     s2 = self.sim.entry_named(a1["concept2"], a2["concept2"])
     return 2.0 * s1 * s2 / (s1 + s2) # harmonic mean
+
+  def get_truth(self, concept1, concept2, relation):
+    raw_truth = 0
+    try:
+      raw_truth = self.predictions.entry_named(concept1, ('right', relation, concept2))
+    except:
+      pass
+    normalized_truth = math.atan(raw_truth)/math.pi + 0.5
+    return {"raw_truth": raw_truth, "truth": normalized_truth}

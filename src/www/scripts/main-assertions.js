@@ -22,7 +22,7 @@ requirejs.config({
   }
 });
 
-requirejs(["core/celestrium"], function(Celestrium) {
+requirejs(["jquery", "jquery.typeahead", "underscore", "backbone", "core/celestrium"], function($, typeahead, _, Backbone, Celestrium) {
 
   var dataProvider = new function() {
     this.minThreshold = 0.94;
@@ -75,14 +75,70 @@ requirejs(["core/celestrium"], function(Celestrium) {
     });
   });
 
-  var seed = {
-    "concept1": "pizza",
-    "concept2": "food",
-    "relation": "IsA",
-    "text": "pizza IsA food",
-    "raw_truth": 0.8,
-    "truth": 0.9,
-  }
-  workspace.graphModel.putNode(seed)
+  var AssertionSearch = Backbone.View.extend({
+    events: {
+      "click #btn-add": "addAssertion",
+    },
+    initialize: function(options) {
+      this.options = options;
+    },
+    render: function() {
+      var container = $("<div />").addClass("assertion-search-container");
+      var conceptInput1 = $('<input type="text" placeHolder="Concept 1..." id="concept1" />');
+      var relationInput = $('<input type="text" placeHolder="Relation..." id="relation" />');
+      var conceptInput2 = $('<input type="text" placeHolder="Concept 2..." id="concept2" />');
+      var inputContainer = $("<span />").append(conceptInput1)
+                                       .append(relationInput)
+                                       .append(conceptInput2);
+      var button = $('<button id="btn-add">Add</button>');
+      this.$el.append(container);
+      container.append(inputContainer)
+               .append(button);
+
+      // apply typeahead to assertion search
+      _.each([conceptInput1, conceptInput2], function(conceptInput) {
+        conceptInput.typeahead({
+          prefetch: this.options.conceptPrefetch,
+          name: "concepts",
+          limit: 100,
+        });
+      }.bind(this));
+
+      relationInput.typeahead({
+        prefetch: this.options.relationPrefetch,
+        name: "relations",
+      });
+
+      return this;
+    },
+    addAssertion: function() {
+      var concept1 = this.$("#concept1").val();
+      var concept2 = this.$("#concept2").val();
+      var relation = this.$("#relation").val();
+      var text = concept1 + " " + relation + " " + concept2;
+      var node = {
+        "concept1": concept1,
+        "concept2": concept2,
+        "relation": relation,
+        "text": text,
+      };
+      $.ajax({
+        url: "get_truth",
+        data: {node: JSON.stringify(node)},
+        success: function(response) {
+          var newNode = _.extend(node, response);
+          workspace.graphModel.putNode(newNode);
+        },
+      });
+    },
+  });
+
+  var assertionSearch = new AssertionSearch({
+    graphModel: workspace.graphModel,
+    conceptPrefetch: "/get_concepts",
+    relationPrefetch: "/get_relations",
+  }).render();
+
+  workspace.tr.append(assertionSearch.el);
 
 });
