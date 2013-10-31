@@ -13,8 +13,8 @@ class Server(object):
                 }
 
   def __init__(self, knowledgebaseURI, numAxes, graphType):
-    matrix = knowledgebase.getMatrix(knowledgebaseURI)
-    self.graph = graph.createGraph(matrix.svd(k=numAxes), graphType)
+    matrix = knowledgebase.get_matrix(knowledgebaseURI)
+    self.graph = graph.create_graph(matrix, numAxes, graphType)
     if graphType == 'assertions':
       Server._cp_config['tools.staticdir.index'] = 'index-assertions.html'
 
@@ -33,8 +33,29 @@ class Server(object):
   def get_related_nodes(self, nodes, minStrength):
     return self.graph.get_related_nodes(json.loads(nodes), float(minStrength))
 
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_dimensionality_bounds(self):
+    return self.graph.get_dimensionality_bounds()
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_truth(self, node):
+    node = json.loads(node)
+    return self.graph.get_truth(node["concept1"], node["concept2"], node["relation"])
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_concepts(self):
+    return self.graph.get_concepts()
+
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_relations(self):
+    return self.graph.get_relations()
+
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
                         'server.socket_port': int(portStr),
                        })
 
-cherrypy.quickstart(Server(knowledgebaseURI, int(numAxesStr), graphType))
+cherrypy.quickstart(Server(knowledgebaseURI, numAxesStr, graphType))
