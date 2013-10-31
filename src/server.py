@@ -13,8 +13,8 @@ class Server(object):
                 }
 
   def __init__(self, knowledgebaseURI, numAxes, graphType):
-    matrix = knowledgebase.getMatrix(knowledgebaseURI)
-    self.graph = graph.createGraph(matrix.svd(k=numAxes), graphType)
+    matrix = knowledgebase.get_matrix(knowledgebaseURI)
+    self.graph = graph.create_graph(matrix, numAxes, graphType)
     if graphType == 'assertions':
       Server._cp_config['tools.staticdir.index'] = 'index-assertions.html'
 
@@ -33,7 +33,10 @@ class Server(object):
   def get_related_nodes(self, nodes, minStrength):
     return self.graph.get_related_nodes(json.loads(nodes), float(minStrength))
 
-  # this is terrible and assumes it will only be called for assertion graphs
+  @cherrypy.expose
+  @cherrypy.tools.json_out()
+  def get_dimensionality_bounds(self):
+    return self.graph.get_dimensionality_bounds()
 
   @cherrypy.expose
   @cherrypy.tools.json_out()
@@ -51,9 +54,8 @@ class Server(object):
   def get_relations(self):
     return self.graph.get_relations()
 
-
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
                         'server.socket_port': int(portStr),
                        })
 
-cherrypy.quickstart(Server(knowledgebaseURI, int(numAxesStr), graphType))
+cherrypy.quickstart(Server(knowledgebaseURI, numAxesStr, graphType))
