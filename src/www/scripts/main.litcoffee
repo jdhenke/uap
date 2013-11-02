@@ -35,7 +35,7 @@ specify which celestrium features to use
         "core/graphStats": {}
         "core/selection": {}
         "core/nodeProfile": {}
-        "core/linkHistogram": {}
+        "core/linkStrengthCDF": {}
 
 Create an interface to the backend.
 This should probably get pushed back into celestrium somehow.
@@ -89,19 +89,21 @@ the plugin instances are available to this callback.
 
               graphModel.on "add:link", (link) ->
                 setLinkStrength link
-                dimModel.on "change:dimensionality", ->
-                  setLinkStrength link
 
               dimModel.on "change:dimensionality", ->
-                graphModel.trigger "change:links"
-                graphModel.trigger "change"
+                  _.each graphModel.getLinks(), setLinkStrength
+                  graphModel.trigger "change:links"
+                  graphModel.trigger "change"
 
               scale = d3.scale.linear().domain([response.min, response.max]).range([0, 100])
               dimensionalitySliderContainer = $("<div />")
               dimensionalitySliderContainer.append $("<span />").text("Dimensionality: ")
-              slider = $("<input type=\"range\" min=\"0\" max=\"100\" />").val(scale(dimModel.get("dimensionality"))).on("change", ->
-                dimModel.set "dimensionality", scale.invert($(this).val())
-              ).appendTo(dimensionalitySliderContainer)
+              slider = $("<input type=\"range\" min=\"0\" max=\"100\" />")
+                .val(scale(dimModel.get("dimensionality")))
+                .on("change", ->
+                  dimModel.set "dimensionality", scale.invert($(this).val())
+                )
+                .appendTo(dimensionalitySliderContainer)
 
               workspace = Workspace.getInstance()
               workspace.addTopLeft dimensionalitySliderContainer
