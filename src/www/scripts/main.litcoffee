@@ -31,7 +31,7 @@ specify which celestrium features to use
         "core/graphView": {}
         "core/forceSliders": {}
         "core/nodeSearch":
-          "prefetch": "get_edges"
+          "get_nodes"
         "core/graphStats": {}
         "core/selection": {}
         "core/nodeProfile": {}
