@@ -58,7 +58,7 @@ the plugin instances are available to this callback.
 
               dataProvider = new ConceptProvider (link) ->
                 setLinkStrength link
-                link.strength > 0.1
+                link.strength > 0.10
               linkChecker = new CoeffLinkChecker(graphModel, dataProvider)
 
               keyListener = KeyListener.getInstance()
