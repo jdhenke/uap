@@ -1,46 +1,35 @@
-define ["core/singleton", "core/graphModel", "core/workspace"],
-(Singleton, GraphModel, Workspace) ->
+define ["core/singleton", "core/graphModel", "core/sliders"],
+(Singleton, GraphModel, Sliders) ->
 
-  class DimSliderView extends Backbone.View
+  class DimSlider extends Backbone.Model
 
-    constructor: (@minDimensionality, @maxDimensionality, @graphModel) ->
+    constructor: (min, max, graphModel, sliders) ->
+
+      # ensure backbone model components are initialized
+      super()
 
       # create internal state to maintain current dimensionality
       @dimModel = new Backbone.Model({})
-      @dimModel.set "minDimensionality", @minDimensionality
-      @dimModel.set "maxDimensionality", @maxDimensionality
-      @dimModel.set "dimensionality", @maxDimensionality
+      @dimModel.set "min", min
+      @dimModel.set "max", max
+      @dimModel.set "dimensionality", max
 
       # update link strengths when the dimensionality changes
       @listenTo @dimModel, "change:dimensionality", () ->
         # note: supplying `this` as the context is necessary
-        _.each @graphModel.getLinks(), @setLinkStrength, this
-        @graphModel.trigger "change:links"
-        @graphModel.trigger "change"
-
-      super()
-
-    render: () ->
+        _.each graphModel.getLinks(), @setLinkStrength, this
+        graphModel.trigger "change:links"
+        graphModel.trigger "change"
 
       # create scale to map dimensionality to slider value in ui
       scale = d3.scale.linear()
-        .domain([@minDimensionality, @maxDimensionality])
+        .domain([min, max])
         .range([0, 100])
 
-      # add label to view
-      $("""<span>Dimensionality: </span>""")
-        .appendTo(@$el)
-
-      # add slider to view, adjusting the underlying state as it changes
-      $slider = $("<input type=\"range\" min=\"0\" max=\"100\" />")
-        .val(scale(@dimModel.get("dimensionality")))
-        .on "change", () =>
-          @dimModel.set "dimensionality", scale.invert($slider.val())
-          $slider.blur()
-        .appendTo(@$el)
-
-      # allow chained function calls
-      return this
+      dimModel = @dimModel
+      sliders.addSlider "Dimensionality", scale(@dimModel.get("dimensionality")), (val) ->
+        dimModel.set "dimensionality", scale.invert val
+        $(this).blur()
 
     # recompute the strength of the link based on
     # its coefficients and current dimensionality
@@ -63,13 +52,11 @@ define ["core/singleton", "core/graphModel", "core/workspace"],
         dimMultiple *= dimensionality
       Math.min 1, Math.max(0, strength)
 
-  class DimSliderAPI extends DimSliderView
+  class DimSliderAPI extends DimSlider
     constructor: (opts) ->
       [min, max] = opts
       graphModel = GraphModel.getInstance()
-      super(min, max, graphModel)
-      @render()
-      workspace = Workspace.getInstance()
-      workspace.addTopLeft @el
+      sliders = Sliders.getInstance()
+      super(min, max, graphModel, sliders)
 
   _.extend DimSliderAPI, Singleton

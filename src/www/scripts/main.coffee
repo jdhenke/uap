@@ -23,6 +23,7 @@ require ["core/celestrium"], (Celestrium) ->
         "nodeHash": (node) -> node.text
         "linkHash": (link) -> link.source.text + link.target.text
       "core/graphView": {}
+      "core/sliders": {}
       "core/forceSliders": {}
       "core/nodeSearch":
         "get_nodes"
