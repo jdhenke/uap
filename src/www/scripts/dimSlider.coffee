@@ -1,9 +1,9 @@
-define ["core/singleton", "core/graphModel", "core/sliders"],
-(Singleton, GraphModel, Sliders) ->
+define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
+(Singleton, GraphModel, Sliders, Stats) ->
 
   class DimSlider extends Backbone.Model
 
-    constructor: (min, max, graphModel, sliders) ->
+    constructor: (min, max, graphModel, sliders, stats) ->
 
       # ensure backbone model components are initialized
       super()
@@ -14,12 +14,19 @@ define ["core/singleton", "core/graphModel", "core/sliders"],
       @dimModel.set "max", max
       @dimModel.set "dimensionality", max
 
+      # create stat view
+      updateDimStatUI = stats.addStat("Dimensionality")
+      updateDimStat = () =>
+        updateDimStatUI(parseInt(@dimModel.get("dimensionality")))
+      updateDimStat()
+
       # update link strengths when the dimensionality changes
-      @listenTo @dimModel, "change:dimensionality", () ->
+      @listenTo @dimModel, "change:dimensionality", () =>
         # note: supplying `this` as the context is necessary
         _.each graphModel.getLinks(), @setLinkStrength, this
         graphModel.trigger "change:links"
         graphModel.trigger "change"
+        updateDimStat()
 
       # create scale to map dimensionality to slider value in ui
       scale = d3.scale.linear()
@@ -30,6 +37,7 @@ define ["core/singleton", "core/graphModel", "core/sliders"],
       sliders.addSlider "Dimensionality", scale(@dimModel.get("dimensionality")), (val) ->
         dimModel.set "dimensionality", scale.invert val
         $(this).blur()
+
 
     # recompute the strength of the link based on
     # its coefficients and current dimensionality
@@ -57,6 +65,7 @@ define ["core/singleton", "core/graphModel", "core/sliders"],
       [min, max] = opts
       graphModel = GraphModel.getInstance()
       sliders = Sliders.getInstance()
-      super(min, max, graphModel, sliders)
+      stats = Stats.getInstance()
+      super(min, max, graphModel, sliders, stats)
 
   _.extend DimSliderAPI, Singleton

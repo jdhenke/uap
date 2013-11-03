@@ -17,6 +17,7 @@ require ["core/celestrium"], (Celestrium) ->
       # their arguments should be specific to this data set
       "core/workspace":
         "el": document.querySelector "#workspace"
+        "title": "UAP"
       "core/keyListener":
         document.querySelector "body"
       "core/graphModel":
@@ -27,14 +28,15 @@ require ["core/celestrium"], (Celestrium) ->
       "core/forceSliders": {}
       "core/nodeSearch":
         "get_nodes"
-      "core/graphStats": {}
+      "core/stats": {}
       "core/selection": {}
       "core/nodeProfile": {}
       "core/linkDistribution": {}
       # these are plugins i defined specific to this data set
       "uap/dimSlider":
         [response.min, response.max]
-       "uap/conceptProvider": {}
+      "uap/conceptProvider": {}
+      "uap/codeLinks": {}
 
   # ask server for range of dimensionalities
   $.ajax
