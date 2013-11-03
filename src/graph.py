@@ -142,7 +142,7 @@ class AssertionGraph(KBGraph):
 
   def get_related_nodes(self, assertions, minRelatedness):
     output = {}
-    subGraph = self.graphs[self.get_dimensionality_bounds()["min"]]
+    subGraph = self.graphs[self.get_dimensionality_bounds()["max"]]
     for assertion in assertions:
       relation = assertion["relation"]
       c1 = assertion["concept1"]
