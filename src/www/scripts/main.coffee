@@ -14,6 +14,7 @@ require ["core/celestrium"], (Celestrium) ->
     # initialize the workspace with all the below plugins
     Celestrium.init
       # these come with celestrium
+      # their arguments should be specific to this data set
       "core/workspace":
         "el": document.querySelector "#workspace"
       "core/keyListener":
@@ -28,9 +29,8 @@ require ["core/celestrium"], (Celestrium) ->
       "core/graphStats": {}
       "core/selection": {}
       "core/nodeProfile": {}
-      "core/linkStrengthCDF": {}
-      # these are ones i defined specific to this data set
-      # you should create a dataProvider
+      "core/linkDistribution": {}
+      # these are plugins i defined specific to this data set
       "uap/dimSlider":
         [response.min, response.max]
        "uap/conceptProvider": {}

@@ -34,7 +34,9 @@ define ["core/singleton", "core/graphModel", "core/workspace"],
       # add slider to view, adjusting the underlying state as it changes
       $slider = $("<input type=\"range\" min=\"0\" max=\"100\" />")
         .val(scale(@dimModel.get("dimensionality")))
-        .on("change", => @dimModel.set "dimensionality", scale.invert($slider.val()))
+        .on "change", () =>
+          @dimModel.set "dimensionality", scale.invert($slider.val())
+          $slider.blur()
         .appendTo(@$el)
 
       # allow chained function calls
