@@ -1,5 +1,13 @@
+# interface to uap's semantic network
+# nodes are concepts from a semantic network
+# links are the relatedness of two concepts
 define ["core/dataProvider", "core/singleton", "core/keyListener", "core/selection", "core/graphModel", "uap/dimSlider"],
 (DataProvider, Singleton, KeyListener, Selection, GraphModel, DimSlider) ->
+
+  # minStrength is the minimum similarity
+  # two nodes must have to be considered linked.
+  # this is evaluated at the minimum dimensionality
+  minStrength = 0.75
 
   class ConceptProvider extends DataProvider
 
@@ -17,11 +25,13 @@ define ["core/dataProvider", "core/singleton", "core/keyListener", "core/selecti
     getLinkedNodes: (nodes, callback) ->
       data =
         nodes: JSON.stringify(nodes)
-        minStrength: 0.75 # TODO what does this mean?
+        minStrength: minStrength
       @ajax "get_related_nodes", data, callback
 
+    # initialize each link's strength before being added to the graph model
     linkFilter: (link) ->
       @dimSlider.setLinkStrength(link)
+      return true
 
   class ConceptProviderAPI extends ConceptProvider
       constructor: () ->

@@ -8,7 +8,7 @@ requirejs.config
 # main entry point
 require ["core/celestrium"], (Celestrium) ->
 
-  # call with server's response to pings about dimensionality
+  # call with server's response to ping about dimensionality
   main = (response) ->
 
     # initialize the workspace with all the below plugins

@@ -1,3 +1,4 @@
+# Allows user to adjust the dimensionality of the inference  in realtime
 define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
 (Singleton, GraphModel, Sliders, Stats) ->
 
@@ -22,7 +23,6 @@ define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
 
       # update link strengths when the dimensionality changes
       @listenTo @dimModel, "change:dimensionality", () =>
-        # note: supplying `this` as the context is necessary
         _.each graphModel.getLinks(), @setLinkStrength, this
         graphModel.trigger "change:links"
         graphModel.trigger "change"
@@ -33,22 +33,23 @@ define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
         .domain([min, max])
         .range([0, 100])
 
+      # add dimensionality slider inot ui
       dimModel = @dimModel
       sliders.addSlider "Dimensionality", scale(@dimModel.get("dimensionality")), (val) ->
         dimModel.set "dimensionality", scale.invert val
         $(this).blur()
 
 
-    # recompute the strength of the link based on
-    # its coefficients and current dimensionality
+    # set link.strength based on its coefficients and
+    # the current dimensionality
     setLinkStrength: (link) ->
-      link.strength = @reconstructPoly(link.coeffs)
+      link.strength = @interpolate(link.coeffs)
 
     # reconstruct polynomial from coefficients
     # from least squares polynomial fit done server side,
-    # and return the strength that polynomial evaluated
+    # and return that polynomial evaluated
     # at the current dimensionality
-    reconstructPoly: (coeffs) ->
+    interpolate: (coeffs) ->
       degree = coeffs.length
       strength = 0
       dimensionality = @dimModel.get("dimensionality")
