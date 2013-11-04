@@ -1,12 +1,12 @@
 requirejs.config
 
   # must point to the URL corresponding to the celestrium repo
-  baseUrl: "/scripts/celestrium/"
+  baseUrl: "/scripts/celestrium/core"
   # specifies namespace and URL path to my custom plugins
-  paths: "uap": "../"
+  paths: "uap": "../../"
 
 # main entry point
-require ["core/celestrium"], (Celestrium) ->
+require ["Celestrium"], (Celestrium) ->
 
   # call with server's response to ping about dimensionality
   main = (response) ->
@@ -15,28 +15,28 @@ require ["core/celestrium"], (Celestrium) ->
     Celestrium.init
       # these come with celestrium
       # their arguments should be specific to this data set
-      "core/workspace":
+      "Layout":
         "el": document.querySelector "#workspace"
         "title": "UAP"
-      "core/keyListener":
+      "KeyListener":
         document.querySelector "body"
-      "core/graphModel":
+      "GraphModel":
         "nodeHash": (node) -> node.text
         "linkHash": (link) -> link.source.text + link.target.text
-      "core/graphView": {}
-      "core/sliders": {}
-      "core/forceSliders": {}
-      "core/nodeSearch":
+      "GraphView": {}
+      "Sliders": {}
+      "ForceSliders": {}
+      "NodeSearch":
         "get_nodes"
-      "core/stats": {}
-      "core/selection": {}
-      "core/nodeProfile": {}
-      "core/linkDistribution": {}
+      "Stats": {}
+      "NodeSelection": {}
+      "NodeDetails": {}
+      "LinkDistribution": {}
       # these are plugins i defined specific to this data set
-      "uap/dimSlider":
+      "uap/DimSlider":
         [response.min, response.max]
-      "uap/conceptProvider": {}
-      "uap/codeLinks": {}
+      "uap/ConceptProvider": {}
+      "uap/CodeLinks": {}
 
   # ask server for range of dimensionalities
   $.ajax

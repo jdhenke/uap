@@ -1,27 +1,31 @@
 # Allows user to adjust the dimensionality of the inference  in realtime
-define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
-(Singleton, GraphModel, Sliders, Stats) ->
+define [], () ->
 
   class DimSlider extends Backbone.Model
 
-    constructor: (min, max, graphModel, sliders, stats) ->
+    constructor: (options) ->
+
+      [@min, @max] = options
 
       # ensure backbone model components are initialized
       super()
 
       # create internal state to maintain current dimensionality
       @dimModel = new Backbone.Model({})
-      @dimModel.set "min", min
-      @dimModel.set "max", max
-      @dimModel.set "dimensionality", max
+      @dimModel.set "min", @min
+      @dimModel.set "max", @max
+      @dimModel.set "dimensionality", @max
+
+    init: (instances) ->
 
       # create stat view
-      updateDimStatUI = stats.addStat("Dimensionality")
+      updateDimStatUI = instances["Stats"].addStat("Dimensionality")
       updateDimStat = () =>
         updateDimStatUI(parseInt(@dimModel.get("dimensionality")))
       updateDimStat()
 
       # update link strengths when the dimensionality changes
+      graphModel = instances["GraphModel"]
       @listenTo @dimModel, "change:dimensionality", () =>
         _.each graphModel.getLinks(), @setLinkStrength, this
         graphModel.trigger "change:links"
@@ -30,15 +34,15 @@ define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
 
       # create scale to map dimensionality to slider value in ui
       scale = d3.scale.linear()
-        .domain([min, max])
+        .domain([@min, @max])
         .range([0, 100])
 
-      # add dimensionality slider inot ui
+      # add dimensionality slider into ui
       dimModel = @dimModel
+      sliders = instances["Sliders"]
       sliders.addSlider "Dimensionality", scale(@dimModel.get("dimensionality")), (val) ->
         dimModel.set "dimensionality", scale.invert val
         $(this).blur()
-
 
     # set link.strength based on its coefficients and
     # the current dimensionality
@@ -60,13 +64,3 @@ define ["core/singleton", "core/graphModel", "core/sliders", "core/stats"],
         strength += coeffs[i] * dimMultiple
         dimMultiple *= dimensionality
       Math.min 1, Math.max(0, strength)
-
-  class DimSliderAPI extends DimSlider
-    constructor: (opts) ->
-      [min, max] = opts
-      graphModel = GraphModel.getInstance()
-      sliders = Sliders.getInstance()
-      stats = Stats.getInstance()
-      super(min, max, graphModel, sliders, stats)
-
-  _.extend DimSliderAPI, Singleton

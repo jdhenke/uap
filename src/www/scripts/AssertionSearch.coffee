@@ -1,24 +1,29 @@
 # provides search to add custom assertions
-define ["core/singleton", "core/workspace", "core/graphModel", "core/graphView", "uap/dimSlider"],
-(Singleton, Workspace, GraphModel, GraphView, DimSlider) ->
+define [], () ->
 
   class AssertionSearchView extends Backbone.View
 
     events:
       "click #btn-add": "addAssertion"
 
-    initialize: (options) ->
-      @options = options
+    constructor: (@options) ->
+      super()
+
+    init: (instances) ->
       colorScale = d3.scale.linear()
         .domain([0, 1])
         .range(["red", "green"])
-      update = (n) => colorScale(@options.dimSlider.interpolate(n.truth_coeffs))
-      @options.graphView.on "enter:node", (nodeSelection) ->
+      update = (n) => colorScale(instances["uap/DimSlider"].interpolate(n.truth_coeffs))
+      instances["GraphView"].on "enter:node", (nodeSelection) ->
         nodeSelection.attr "fill", update
 
-      @options.dimSlider.dimModel.on "change:dimensionality", =>
-        @options.graphView.getNodeSelection().attr "fill", update
+      instances["uap/DimSlider"].dimModel.on "change:dimensionality", =>
+        instances["GraphView"].getNodeSelection().attr "fill", update
 
+      @render()
+      instances["Layout"].addTopRight @el
+
+      @graphModel = instances["GraphModel"]
 
     render: ->
 
@@ -60,21 +65,4 @@ define ["core/singleton", "core/workspace", "core/graphModel", "core/graphView",
           node: JSON.stringify(node)
         success: (response) =>
           newNode = _.extend(node, response)
-          @options.graphModel.putNode newNode
-
-  class AssertionSearchAPI extends AssertionSearchView
-    constructor: () ->
-      graphModel = GraphModel.getInstance()
-      graphView = GraphView.getInstance()
-      dimSlider = DimSlider.getInstance()
-      super
-        graphModel: graphModel,
-        graphView: graphView,
-        conceptPrefetch: "/get_concepts",
-        relationPrefetch: "/get_relations",
-        dimSlider: dimSlider
-      @render()
-      workspace = Workspace.getInstance()
-      workspace.addTopRight(@$el)
-
-  _.extend AssertionSearchAPI, Singleton
+          @graphModel.putNode newNode

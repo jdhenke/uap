@@ -1,8 +1,7 @@
 # interface to uap's semantic network
 # nodes are concepts from a semantic network
 # links are the relatedness of two concepts
-define ["core/dataProvider", "core/singleton", "core/keyListener", "core/selection", "core/graphModel", "uap/dimSlider"],
-(DataProvider, Singleton, KeyListener, Selection, GraphModel, DimSlider) ->
+define ["DataProvider"], (DataProvider) ->
 
   # minStrength is the minimum similarity
   # two nodes must have to be considered linked.
@@ -11,8 +10,9 @@ define ["core/dataProvider", "core/singleton", "core/keyListener", "core/selecti
 
   class ConceptProvider extends DataProvider
 
-    constructor: (@graphModel, @keyListener, @selection, @dimSlider) ->
-      super(@graphModel, @keyListener, @selection)
+    init: (instances) ->
+      @dimSlider = instances["uap/DimSlider"]
+      super(instances)
 
     getLinks: (node, nodes, callback) ->
       data =
@@ -32,13 +32,3 @@ define ["core/dataProvider", "core/singleton", "core/keyListener", "core/selecti
     linkFilter: (link) ->
       @dimSlider.setLinkStrength(link)
       return true
-
-  class ConceptProviderAPI extends ConceptProvider
-      constructor: () ->
-        graphModel = GraphModel.getInstance()
-        keyListener = KeyListener.getInstance()
-        selection = Selection.getInstance()
-        dimSlider = DimSlider.getInstance()
-        super(graphModel, keyListener, selection, dimSlider)
-
-  _.extend ConceptProviderAPI, Singleton
