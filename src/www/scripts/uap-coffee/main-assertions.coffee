@@ -3,7 +3,7 @@ requirejs.config
   # must point to the URL corresponding to the celestrium repo
   baseUrl: "/scripts/celestrium/core"
   # specifies namespace and URL path to my custom plugins
-  paths: "uap": "../../"
+  paths: "uap": "../../uap/"
 
 # main entry point
 require ["Celestrium"], (Celestrium) ->
