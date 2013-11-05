@@ -3,8 +3,6 @@ import simplejson as json
 
 '''USAGE: python src/server.py <knowledgebase-uri> <num-axes> <concepts|assertions> <port>'''
 
-knowledgebaseURI, numAxesStr, graphType, portStr = sys.argv[1:]
-
 class Server(object):
 
   _cp_config = {'tools.staticdir.on' : True,
@@ -54,8 +52,10 @@ class Server(object):
   def get_relations(self):
     return self.graph.get_relations()
 
-cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': int(portStr),
-                       })
+if __name__ == '__main__':
+  knowledgebaseURI, numAxesStr, graphType, portStr = sys.argv[1:]
+  cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                          'server.socket_port': int(portStr),
+                         })
 
-cherrypy.quickstart(Server(knowledgebaseURI, numAxesStr, graphType))
+  cherrypy.quickstart(Server(knowledgebaseURI, numAxesStr, graphType))

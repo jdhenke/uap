@@ -50,11 +50,10 @@ class ParticularSVDGraphWrapper(object):
 
 class KBGraph(Graph):
 
-  def __init__(self, matrix, numAxesStr):
+  def __init__(self, matrix, axesCounts):
     self.matrix = matrix
     self.graphs = {}
-    for numAxes in numAxesStr.split(','):
-      numAxes = int(numAxes)
+    for numAxes in axesCounts:
       self.graphs[numAxes] = ParticularSVDGraphWrapper(matrix, numAxes)
 
   def get_dimensionality_bounds(self):
