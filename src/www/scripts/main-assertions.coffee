@@ -27,7 +27,7 @@ require ["Celestrium"], (Celestrium) ->
       "Sliders": {}
       "ForceSliders": {}
       # "NodeSearch":
-      #   "get_nodes"
+      #   prefetch: "get_nodes"
       "Stats": {}
       "NodeSelection": {}
       "NodeDetails": {}
