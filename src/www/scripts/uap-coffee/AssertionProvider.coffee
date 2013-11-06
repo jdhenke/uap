@@ -6,7 +6,7 @@ define ["DataProvider"], (DataProvider) ->
   # minStrength is the minimum similarity
   # two nodes must have to be considered linked.
   # this is evaluated at the minimum dimensionality
-  minStrength = 0.94
+  numNodes = 25
 
   class AssertionProvider extends DataProvider
 
@@ -25,7 +25,7 @@ define ["DataProvider"], (DataProvider) ->
     getLinkedNodes: (nodes, callback) ->
       data =
         nodes: JSON.stringify(nodes)
-        minStrength: minStrength
+        numNodes: numNodes
       @ajax "get_related_nodes", data, callback
 
     # initialize each link's strength before being added to the graph model

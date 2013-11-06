@@ -30,8 +30,8 @@ class Server(object):
 
   @cherrypy.expose
   @cherrypy.tools.json_out()
-  def get_related_nodes(self, nodes, minStrength):
-    return self.graph.get_related_nodes(json.loads(nodes), float(minStrength))
+  def get_related_nodes(self, nodes, numNodes):
+    return self.graph.get_related_nodes(json.loads(nodes), int(numNodes))
 
   @cherrypy.expose
   @cherrypy.tools.json_out()
