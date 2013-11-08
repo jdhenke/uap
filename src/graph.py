@@ -1,10 +1,11 @@
 import math, numpy, divisi2
 
 def create_graph(matrix, numAxesStr, graphType):
+  axesArray = [int(x) for x in numAxesStr.split(",")]
   if graphType == 'concepts':
-    return ConceptGraph(matrix, numAxesStr)
+    return ConceptGraph(matrix, axesArray)
   elif graphType == 'assertions':
-    return AssertionGraph(matrix, numAxesStr)
+    return AssertionGraph(matrix, axesArray)
   raise Exception("unrecognized graph type: [%s]" % (graphType, ))
 
 class Graph(object):
@@ -20,41 +21,59 @@ class Graph(object):
 
 class ParticularSVDGraphWrapper(object):
   def __init__(self, matrix, numAxes):
-    self.concept_axes, self.axis_weights, self.feature_axes = matrix.svd(k=numAxes)
-    self.predictions = divisi2.reconstruct(self.concept_axes,
-                                           self.axis_weights,
-                                           self.feature_axes)
-    self.sim = divisi2.reconstruct_similarity(self.concept_axes,
-                                              self.axis_weights,
+    concept_axes, axis_weights, feature_axes = matrix.svd(k=numAxes)
+    self.predictions = divisi2.reconstruct(concept_axes,
+                                           axis_weights,
+                                           feature_axes)
+    self.sim = divisi2.reconstruct_similarity(concept_axes,
+                                              axis_weights,
                                               post_normalize=True)
+    U, s, V = matrix.T.svd(k=numAxes)
+    self.feature_sim = \
+     divisi2.reconstruct_similarity(U, s, post_normalize=True, offset=1)
   def get_concept_similarity(self, a, b):
-    return self.sim.entry_named(a, b)
+    return max(0, min(1, self.sim.entry_named(a, b)))
 
   def get_assertion_similarity(self, a1, a2):
-    if a1["relation"] != a2["relation"]:
+    right_feature1 = ('right', a1["relation"], a1["concept2"])
+    right_feature2 = ('right', a2["relation"], a2["concept2"])
+    left_feature1 = ('left', a1["relation"], a1["concept1"])
+    left_feature2 = ('left', a2["relation"], a2["concept1"])
+    right_sim = self.get_feature_similarity(right_feature1, right_feature2)
+    left_sim = self.get_feature_similarity(left_feature1, left_feature2)
+    def harmonic_mean(s1, s2):
+      if s1 + s2 == 0:
+        return 0
+      else:
+        return 2.0 * s1 * s2 / (s1 + s2)
+    return max(0, min(1, harmonic_mean(right_sim, left_sim)))
+
+  def get_feature_similarity(self, f1, f2):
+    try:
+      return max(0, min(1, self.feature_sim.entry_named(f1, f2)))
+    except KeyError:
       return 0
-    s1 = self.sim.entry_named(a1["concept1"], a2["concept1"])
-    s2 = self.sim.entry_named(a1["concept2"], a2["concept2"])
-    return 2.0 * s1 * s2 / (s1 + s2) # harmonic mean
 
   def get_truth(self, concept1, concept2, relation):
     try:
-      return self.predictions.entry_named(concept1, ('right', relation, concept2))
+      raw_truth = self.predictions.entry_named(concept1, ('right', relation, concept2))
       # normalize all numbers to (0,1)
-      return math.atan(raw_truth)/math.pi + 0.5
-    except:
+      return 1/(1+(math.e **(-3 * raw_truth)))
+    except KeyError:
       return 0
 
   def get_related_concepts(self, a, n):
     return self.sim.row_named(a).top_items(n=n)
 
+  def get_related_features(self, f, n):
+    return self.feature_sim.row_named(f).top_items(n=n)
+
 class KBGraph(Graph):
 
-  def __init__(self, matrix, numAxesStr):
+  def __init__(self, matrix, numAxesList):
     self.matrix = matrix
     self.graphs = {}
-    for numAxes in numAxesStr.split(','):
-      numAxes = int(numAxes)
+    for numAxes in numAxesList:
       self.graphs[numAxes] = ParticularSVDGraphWrapper(matrix, numAxes)
 
   def get_dimensionality_bounds(self):
@@ -88,20 +107,18 @@ class ConceptGraph(KBGraph):
     for otherConcept in otherConcepts:
       a, b = concept["text"], otherConcept["text"]
       output.append(self.get_concept_similarity_coeffs(a, b))
+    for i, coeffs in enumerate(output):
+      print "%s %s %.3f, %.3f, %.3f, %.3f" %\
+      (concept["text"], otherConcepts[i]["text"], numpy.poly1d(coeffs)(5), numpy.poly1d(coeffs)(10), numpy.poly1d(coeffs)(50), numpy.poly1d(coeffs)(100))
     return output
 
-  def get_related_nodes(self, concepts, minStrength):
+  def get_related_nodes(self, concepts, numNodes):
     newConceptsSet = set()
-    subGraph = self.graphs[self.get_dimensionality_bounds()["min"]]
+    subGraph = self.graphs[self.get_dimensionality_bounds()["max"]]
     for concept in concepts:
-      limit = 50
-      relatedConcepts = subGraph.sim.row_named(concept["text"]).top_items(n=limit)
-      i = 0
-      while i < len(relatedConcepts) and relatedConcepts[i][1] > minStrength:
-        relatedConcept, strength = relatedConcepts[i]
-        newConceptsSet.add(relatedConcept)
-        i += 1
-    return [{"text": concept} for concept in newConceptsSet]
+      relatedConcepts = subGraph.sim.row_named(concept["text"]).top_items(n=numNodes)
+      newConceptsSet |= set([(b, a) for a,b in relatedConcepts])
+    return [{"text": x[1]} for x in sorted(newConceptsSet, reverse=True)[:numNodes]]
 
 class AssertionGraph(KBGraph):
 
@@ -140,15 +157,15 @@ class AssertionGraph(KBGraph):
       output.append(self.get_assertion_similarity_coeffs(a, assertion))
     return output
 
-  def get_related_nodes(self, assertions, minRelatedness):
+  def get_related_nodes(self, assertions, numNodes):
     output = {}
-    subGraph = self.graphs[self.get_dimensionality_bounds()["min"]]
+    subGraph = self.graphs[self.get_dimensionality_bounds()["max"]]
     for assertion in assertions:
       relation = assertion["relation"]
       c1 = assertion["concept1"]
       c2 = assertion["concept2"]
-      related1 = subGraph.get_related_concepts(c1, 100)
-      related2 = subGraph.get_related_concepts(c2, 100)
+      related1 = subGraph.get_related_concepts(c1, 20)
+      related2 = subGraph.get_related_concepts(c2, 20)
       for ca, relatednessA in related1:
         for cb, relatednessB in related2:
           text = "%s %s %s" % (ca, relation, cb, )
@@ -166,9 +183,8 @@ class AssertionGraph(KBGraph):
             "truth_coeffs": truth_coeffs,
           }
           relatedness = subGraph.get_assertion_similarity(assertion, newAssertion)
-          if relatedness > minRelatedness and newAssertion["truth_coeffs"] != [0,0,0,0]:
-            output[text] = (newAssertion["truth_coeffs"][-1], newAssertion)
-    return [x[1] for x in sorted(output.values())[-25:]]
+          output[text] = (relatedness, newAssertion)
+    return [x[1] for x in sorted(output.values(), reverse=True)[:numNodes]]
 
   def get_truth(self, concept1, concept2, relation):
     truth_coeffs = self.get_truth_coeffs(concept1, concept2, relation)
