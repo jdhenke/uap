@@ -8,4 +8,4 @@
 
 # run server
 # USAGE: python src/server.py <knowledgebase-uri> <num-axes> <concepts|assertions> <port>
-python src/server.py conceptnet 5,10,50,100 assertions $PORT
+python src/server.py data:matrices/conceptnet_en.gz 5,10,50,100 assertions src/www $PORT

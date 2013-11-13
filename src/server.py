@@ -1,22 +1,12 @@
-import os, sys, graph, cherrypy, knowledgebase
+import os, sys, graph, cherrypy
 import simplejson as json
 
-'''USAGE: python src/server.py <knowledgebase-uri> <num-axes> <concepts|assertions> <port>'''
-
-knowledgebaseURI, numAxesStr, graphType, portStr = sys.argv[1:]
+'''USAGE: python src/server.py <kb-file> <num-axes> <concepts|assertions> <www-path> <port>'''
 
 class Server(object):
 
-  _cp_config = {'tools.staticdir.on' : True,
-                'tools.staticdir.dir' : os.path.abspath(os.path.join(os.getcwd(), "src/www")),
-                'tools.staticdir.index' : 'index.html',
-                }
-
-  def __init__(self, knowledgebaseURI, numAxes, graphType):
-    matrix = knowledgebase.get_matrix(knowledgebaseURI)
-    self.graph = graph.create_graph(matrix, numAxes, graphType)
-    if graphType == 'assertions':
-      Server._cp_config['tools.staticdir.index'] = 'index-assertions.html'
+  def __init__(self, matrix_path, dim_list, node_type):
+    self.graph = graph.create_graph(matrix_path, dim_list, node_type)
 
   @cherrypy.expose
   @cherrypy.tools.json_out()
@@ -54,8 +44,22 @@ class Server(object):
   def get_relations(self):
     return self.graph.get_relations()
 
-cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': int(portStr),
-                       })
+if __name__ == '__main__':
 
-cherrypy.quickstart(Server(knowledgebaseURI, numAxesStr, graphType))
+  # parse command line arguments
+  sm_path, dim_list_str, node_type, www_path, port_str = sys.argv[1:]
+  dim_list = [int(dim_str) for dim_str in dim_list_str.split(",")]
+  port = int(port_str)
+
+  # configure cherrypy to properly accept requests
+  cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                          'server.socket_port': port})
+  Server._cp_config = {
+    'tools.staticdir.on' : True,
+    'tools.staticdir.dir' : os.path.abspath(www_path),
+    'tools.staticdir.index' :\
+      'index.html' if node_type == 'concepts' else 'index-assertions.html',
+  }
+
+  # start server
+  cherrypy.quickstart(Server(sm_path, dim_list, node_type))
