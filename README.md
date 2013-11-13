@@ -36,7 +36,7 @@ pip install divisi2 csc-pysparse
 
 Run `foreman start` and go to [http://localhost:5000](http://localhost:5000) to visualize assertions found in Conceptnet.
 
-**You should do this to compile the coffeescript files.**
+**You should do this to compile the coffeescript files used in this project.**
 
 ## Visualizing Your Knowledgebase
 
