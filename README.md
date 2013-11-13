@@ -1,7 +1,7 @@
 Joe Henke's 6.UAP Project
 =========================
 
-> A tool to visualize and understand inference over semantic networks such as [ConceptNet](http://conceptnet5.media.mit.edu/).
+> A tool to visualize inference over semantic networks such as [ConceptNet](http://conceptnet5.media.mit.edu/).
 >
 > Powered by [Celestrium](https://github.com/jdhenke/celestrium).
 
