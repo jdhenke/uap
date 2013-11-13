@@ -73,6 +73,12 @@ Here's an explanation of the command line arguments:
 * `src/www` is the path to the directory that will be served statically - should be where your `index.html` is.
 * `5000` is the port that the visualization will be served on
 
+## Debugging
+
+If you can't click in the node search box, try clicking the middle of the window then clicking in the box. Seems like a tyepahead issue.
+
+If your interface isn't changing between concepts and assetions when you launch your server differently, you probably need to clear your browser's cache.
+
 ## Recommended Reading
 
  - [License](./LICENSE)
