@@ -32,6 +32,15 @@ pip install -r requirements.txt
 pip install divisi2 csc-pysparse
 ```
 
+## Interface Explanation
+
+* **Add nodes** using the search box in the top right.
+* **Select/Deselect nodes** by clicking them and using the hotkeys `Ctrl A` and `Esc`
+* **Add related nodes** by selecting nodes and using the hotkey `+` which is really `Shift =`.
+* **Remove nodes** by selecting them and using the hotkey `Delete`.
+
+Play with the sliders in the top left to get a feel for what they do.
+
 ## Visualizing Conceptnet
 
 Run `foreman start` and go to [http://localhost:5000](http://localhost:5000) to visualize assertions found in Conceptnet.
