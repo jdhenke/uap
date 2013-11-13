@@ -45,20 +45,35 @@ You can also drag the white bar on the link strength distribution chart.
 
 ## Visualizing Conceptnet
 
-Run `foreman start` and go to [http://localhost:5000](http://localhost:5000) to visualize assertions found in Conceptnet.
+Run the following from the root of this repo:
+
+```bash
+foreman start
+```
+
+Then go to [http://localhost:5000](http://localhost:5000) to visualize assertions found in Conceptnet.
 
 **You should do this to compile the coffeescript files used in this project.** See `server.sh` to see how to do this manually.
 
 ## Visualizing Your Knowledgebase
 
+### Creating the Pickled Sparse Matrix
+
 You will need to create a pickled sparse matrix representing your knowledgebase. 
 
 To easily do this, modify `getAssertions()` in `src/parse.py` to return a list or be a generator of assertions in your knowledgebase. 
-It works out of the box with a very simple knowledgebase if you want to try using that first to get a feel for the process.
 
-Running `python src/parse.py` from the root of this repo will create `./kb.pickle`.
+> It works out of the box with a very simple knowledgebase if you want to try using that first to get a feel for the process.
 
-Now to visualize the concepts in your knowledgebase based on sampling results at dimensionalities of 1, 2 and 3, run from the root of this repo:
+Then run the following from the root of this repo to create `./kb.pickle`.
+
+```bash
+python src/parse.py
+```
+
+### Using the Pickled Sparse Matrix
+
+Now to visualize the concepts in your knowledgebase based on sampling results at dimensionalities of 1, 2 and 3, run the following from the root of this repo:
 
 ```bash
 python src/server.py ./kb.pickle 1,2,3 concepts src/www 5000
