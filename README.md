@@ -52,13 +52,15 @@ Run `foreman start` and go to [http://localhost:5000](http://localhost:5000) to 
 ## Visualizing Your Knowledgebase
 
 You will need to create a pickled sparse matrix representing your knowledgebase. 
-To easily do this, modify `getAssertions()` in `src/parse.py` to return a list or be a generator of assertions in your knowledgebase, then run it.
-This will create `kb.pickle` file.
 
-Now to visualize the concepts in your knowledgebase based on sampling results at dimensionalities of 25, 50 and 100, run:
+To easily do this, modify `getAssertions()` in `src/parse.py` to return a list or be a generator of assertions in your knowledgebase. It works out of the box with the simplest knowledgebase possible if you want to try using that first to get a feel for the process.
+
+Running `python src/parse.py` from the root of this repo will create `./kb.pickle`.
+
+Now to visualize the concepts in your knowledgebase based on sampling results at dimensionalities of 1, 2 and 3, run from the root of this repo:
 
 ```bash
-python src/server.py ./kb.pickle 25,50,100 concepts src/www 5000
+python src/server.py ./kb.pickle 1,2,3 concepts src/www 5000
 ```
 
 Again, go to [http://localhost:5000/](http://localhost:5000/).
