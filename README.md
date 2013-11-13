@@ -41,6 +41,8 @@ pip install divisi2 csc-pysparse
 
 Play with the sliders in the top left to get a feel for what they do.
 
+You can also drag the white bar on the link strength distribution chart.
+
 ## Visualizing Conceptnet
 
 Run `foreman start` and go to [http://localhost:5000](http://localhost:5000) to visualize assertions found in Conceptnet.
