@@ -1,3 +1,4 @@
+localStorage.clear()
 requirejs.config
 
   # must point to the URL corresponding to the celestrium repo

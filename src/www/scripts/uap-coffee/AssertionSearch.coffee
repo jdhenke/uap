@@ -43,6 +43,7 @@ define [], () ->
           prefetch: @options.conceptPrefetch
           name: "concepts"
           limit: 100
+          ttl: 10
 
       # apply typeahead to relation searches
       relationInput.typeahead
