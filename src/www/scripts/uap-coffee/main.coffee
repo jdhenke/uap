@@ -31,6 +31,7 @@ require ["Celestrium"], (Celestrium) ->
         prefetch: "get_nodes"
       "Stats": {}
       "NodeSelection": {}
+      "SelectionLayer": {}
       "NodeDetails": {}
       "LinkDistribution": {}
       # these are plugins i defined specific to this data set
